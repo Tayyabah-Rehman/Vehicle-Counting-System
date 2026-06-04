@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History | VehicleCount AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #14141f 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .navbar {
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+            border-radius: 10px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .history-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3B82F6;
+            padding: 0.5rem 1rem;
+            border: 1px solid #3B82F6;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .videos-table {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        tr:hover td {
+            background: rgba(59, 130, 246, 0.04);
+        }
+
+        .view-btn {
+            background: #3B82F6;
+            color: white;
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn:hover {
+            background: #2563EB;
+            transform: translateY(-1px);
+        }
+
+        .download-btn {
+            background: #10B981;
+            color: white;
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        /* ── Video Modal ──────────────────────────────────── */
+
+        .video-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.92);
+            /* Fade in animation */
+            animation: fadeInModal 0.2s ease;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        .video-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #0a0a0f;
+            padding: 24px;
+            border: 2px solid #3B82F6;
+            border-radius: 16px;
+            width: 92%;
+            max-width: 1100px;
+            box-shadow: 0 0 60px rgba(59, 130, 246, 0.3);
+        }
+
+        .video-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .video-modal-header h3 {
+            color: #3B82F6;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            font-size: 28px;
+            cursor: pointer;
+            color: #94a3b8;
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .close-modal:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading spinner shown before video loads */
+        .video-loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-top-color: #3B82F6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .video-player {
+            width: 100%;
+            height: auto;
+            max-height: 75vh;
+            background: #000000;
+            border-radius: 8px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .video-modal-content {
+                width: 98%;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🚗</div>
+                <span>VehicleCount AI</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/upload">Upload</a>
+                <a href="/history" class="active">History</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="history-card">
+            <h1>Video History</h1>
+            <p class="subtitle">Your processed videos</p>
+            <button class="refresh-btn" onclick="loadVideos()">⟳ Refresh</button>
+            <div class="videos-table">
+                <table id="videosTable">
+                    <thead>
+                        <tr>
+                            <th>Video ID</th>
+                            <th>Size</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="videosBody">
+                        <tr>
+                            <td colspan="4" class="no-data">Loading videos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal">
+        <div class="video-modal-content">
+            <div class="video-modal-header">
+                <h3>Processed Video</h3>
+                <span class="close-modal" onclick="closeVideoModal()">&times;</span>
+            </div>
+
+            <!-- Spinner shown while video is loading -->
+            <div class="video-loading" id="videoLoading">
+                <div class="spinner"></div>
+                <p>Loading video...</p>
+            </div>
+
+            <video id="videoPlayer" class="video-player" controls preload="auto">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>VehicleCount AI | Real-time Vehicle Detection & Counting | GPU Accelerated</p>
+    </footer>
+
+    <script>
+        // ── Load video list ──────────────────────────────────
+
+        async function loadVideos() {
+            const tbody = document.getElementById('videosBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="no-data">Loading videos...</td></tr>';
+
+            try {
+                const response = await fetch('/api/videos');
+                const data     = await response.json();
+
+                if (!data.videos || data.videos.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="no-data">No videos found. Upload a video to get started.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+
+                data.videos.forEach(video => {
+                    const date = new Date(video.date * 1000).toLocaleString();
+                    const row  = tbody.insertRow();
+                    row.innerHTML = `
+                        <td><code>${video.job_id.substring(0, 8)}...</code></td>
+                        <td>${video.size_mb} MB</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="view-btn"     onclick="watchVideo('${video.job_id}')">Watch</button>
+                            <button class="download-btn" onclick="downloadVideo('${video.job_id}')">Download</button>
+                        </td>
+                    `;
+                });
+
+            } catch (error) {
+                console.error('Error loading videos:', error);
+                tbody.innerHTML = '<tr><td colspan="4" class="no-data">Error loading videos. Make sure the server is running.</td></tr>';
+            }
+        }
+
+        // ── Watch video in modal ─────────────────────────────
+
+        function watchVideo(jobId) {
+            const modal   = document.getElementById('videoModal');
+            const player  = document.getElementById('videoPlayer');
+            const loading = document.getElementById('videoLoading');
+
+            // Step 1: Fully unload any previous video
+            player.pause();
+            player.removeAttribute('src');
+            player.load();
+
+            // Step 2: Show loading spinner, hide player until ready
+            loading.style.display = 'block';
+            player.style.display  = 'none';
+
+            // Step 3: Show the modal so the element has real dimensions
+            modal.style.display = 'block';
+
+            // Step 4: Attach event listeners for this video session
+            player.oncanplay = function () {
+                // Video is ready to play — hide spinner, show player
+                loading.style.display = 'none';
+                player.style.display  = 'block';
+            };
+
+            player.onerror = function () {
+                loading.innerHTML = '<p style="color:#ef4444;">Failed to load video. Please try again.</p>';
+            };
+
+            // Step 5: Set the src AFTER the modal is visible
+            // The 100ms delay ensures the browser has rendered the modal
+            // and the <video> element has proper dimensions before loading
+            setTimeout(function () {
+                player.src = `/api/watch/${jobId}`;
+                player.load();
+            }, 100);
+        }
+
+        // ── Close modal ──────────────────────────────────────
+
+        function closeVideoModal() {
+            const modal   = document.getElementById('videoModal');
+            const player  = document.getElementById('videoPlayer');
+            const loading = document.getElementById('videoLoading');
+
+            // Fully stop and unload the video to free memory
+            player.pause();
+            player.removeAttribute('src');
+            player.load();
+
+            // Reset spinner state for next open
+            loading.style.display = 'block';
+            loading.innerHTML     = '<div class="spinner"></div><p>Loading video...</p>';
+            player.style.display  = 'none';
+
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking the dark backdrop
+        document.getElementById('videoModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeVideoModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeVideoModal();
+            }
+        });
+
+        // ── Download video ───────────────────────────────────
+
+        function downloadVideo(jobId) {
+            const a      = document.createElement('a');
+            a.href       = `/api/watch/${jobId}`;
+            a.download   = `vehicle_count_${jobId}.mp4`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // ── Init ─────────────────────────────────────────────
+
+        loadVideos();
+        setInterval(loadVideos, 10000);
+    </script>
+
+</body>
+</html>

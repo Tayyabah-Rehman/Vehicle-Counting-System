@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VehicleCount AI | Intelligent Traffic Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #14141f 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+            border-radius: 10px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 32px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3B82F6;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .demo-placeholder {
+            background: #0a0a15;
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .demo-placeholder canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            background: #1a1a2e;
+        }
+
+        .demo-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .capabilities-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .capability-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .capability-card:hover {
+            transform: translateY(-5px);
+            border-color: #3B82F6;
+        }
+
+        .capability-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #3B82F6;
+            margin-bottom: 0.5rem;
+        }
+
+        .capability-card h3 {
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .capability-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .howitworks-section {
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 32px;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: #3B82F6;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .step h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .info-footer {
+            margin-top: 4rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .info-column h4 {
+            color: #3B82F6;
+            margin-bottom: 1rem;
+        }
+
+        .info-column ul {
+            list-style: none;
+        }
+
+        .info-column li {
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            margin-top: 2rem;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .steps-container, .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🚗</div>
+                <span>VehicleCount AI</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="active">Dashboard</a>
+                <a href="/upload">Upload</a>
+                <a href="/history">History</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Vehicle Intelligence<br>Traffic Analytics</h1>
+                <p class="hero-subtitle">
+                    A powerful video-based AI solution that determines the intensity, quantity, and
+                    composition of vehicle traffic. From monitoring road flow to detecting traffic patterns,
+                    this system is an essential tool for smart cities and traffic management.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="liveCount">0</div>
+                        <div class="stat-label">Vehicles Analyzed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="liveFPS">0</div>
+                        <div class="stat-label">Processing Speed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Vehicle Classes</div>
+                    </div>
+                </div>
+                <button class="cta-button" onclick="location.href='/upload'">
+                    <span>📊</span> Start Analysis
+                </button>
+            </div>
+            <div class="demo-placeholder">
+                <canvas id="demoCanvas" width="400" height="250" style="width:100%; height:auto; border-radius:12px;"></canvas>
+                <div class="demo-stats">
+                    <span style="color: #3B82F6;" id="demoCount">🚗 Count: 0</span>
+                    <span style="color: #F59E0B;" id="lastEventText">Waiting...</span>
+                </div>
+                <p style="font-size: 0.65rem; color: #555; margin-top: 0.5rem;">Live demo - vehicles moving right to left</p>
+            </div>
+        </div>
+
+        <div class="capabilities-section">
+            <h2 class="section-title">Capabilities</h2>
+            <div class="capabilities-grid">
+                <div class="capability-card">
+                    <div class="capability-number">01</div>
+                    <h3>Real-time inference</h3>
+                    <p>YOLOv8 with CUDA acceleration achieving 50+ FPS processing on GPU</p>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-number">02</div>
+                    <h3>Multi-vehicle classification</h3>
+                    <p>Detects and counts cars, two-wheelers, buses, and trucks separately</p>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-number">03</div>
+                    <h3>Directional counting</h3>
+                    <p>Counts vehicles moving in different directions (↑ north, ↓ south)</p>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-number">04</div>
+                    <h3>Live event feed</h3>
+                    <p>Real-time alerts when vehicles cross counting lines</p>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-number">05</div>
+                    <h3>REST API</h3>
+                    <p>Easy integration with existing traffic management systems</p>
+                </div>
+                <div class="capability-card">
+                    <div class="capability-number">06</div>
+                    <h3>Multi-environment robustness</h3>
+                    <p>Reliable performance across day/night, different weather conditions</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="howitworks-section">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload Video</h3>
+                    <p>Upload traffic footage (MP4, AVI, MOV, MKV) up to 500MB</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Processing</h3>
+                    <p>YOLOv8 detects vehicles, SORT tracks them across frames</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Results</h3>
+                    <p>View counts, download processed video with bounding boxes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-footer">
+            <div class="info-grid">
+                <div class="info-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li>Features</li>
+                        <li>Pricing</li>
+                        <li>Documentation</li>
+                        <li>API Reference</li>
+                    </ul>
+                </div>
+                <div class="info-column">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li>YOLOv8</li>
+                        <li>SORT Tracking</li>
+                        <li>FastAPI</li>
+                        <li>PyTorch</li>
+                    </ul>
+                </div>
+                <div class="info-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li>GitHub Repository</li>
+                        <li>Technical Paper</li>
+                        <li>Case Studies</li>
+                        <li>Support</li>
+                    </ul>
+                </div>
+                <div class="info-column">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>Email: info@vehiclecount.ai</li>
+                        <li>LinkedIn</li>
+                        <li>Twitter</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 VehicleCount AI | AI-Powered Traffic Analytics | GPU Accelerated</p>
+        </div>
+    </main>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('demoCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 250;
+
+            let vehicles = [];
+            let nextId = 1;
+            let totalCount = 0;
+            const lineX = 200; // Vertical counting line at center
+
+            // Vehicle types with realistic proportions
+            const vehicleTypes = [
+                { name: 'CAR', color: '#3B82F6', width: 22, height: 12, prob: 0.4, label: '🚗' },
+                { name: 'BIKE', color: '#10B981', width: 12, height: 8, prob: 0.35, label: '🏍️' },
+                { name: 'BUS', color: '#F59E0B', width: 32, height: 16, prob: 0.15, label: '🚌' },
+                { name: 'TRUCK', color: '#EF4444', width: 30, height: 14, prob: 0.10, label: '🚛' }
+            ];
+
+            function getRandomVehicleType() {
+                const rand = Math.random();
+                let cumulative = 0;
+                for (const type of vehicleTypes) {
+                    cumulative += type.prob;
+                    if (rand < cumulative) return type;
+                }
+                return vehicleTypes[0];
+            }
+
+            class Vehicle {
+                constructor(x, y, type) {
+                    this.x = x;
+                    this.y = y;
+                    this.type = type;
+                    this.id = nextId++;
+                    this.counted = false;
+                    this.speed = 0.8 + Math.random() * 0.7;
+                    this.width = type.width;
+                    this.height = type.height;
+                    this.color = type.color;
+                    this.label = type.label;
+                }
+
+                draw() {
+                    // Draw vehicle body
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                    // Draw windows for cars and buses
+                    if (this.type.name === 'CAR') {
+                        ctx.fillStyle = '#93C5FD';
+                        ctx.fillRect(this.x + 4, this.y + 2, 5, 4);
+                        ctx.fillRect(this.x + 13, this.y + 2, 5, 4);
+                    } else if (this.type.name === 'BUS') {
+                        ctx.fillStyle = '#FDE68A';
+                        for (let i = 0; i < 4; i++) {
+                            ctx.fillRect(this.x + 4 + i * 7, this.y + 3, 5, 5);
+                        }
+                    } else if (this.type.name === 'TRUCK') {
+                        ctx.fillStyle = '#FCA5A5';
+                        ctx.fillRect(this.x + 18, this.y + 3, 8, 5);
+                    }
+
+                    // Draw wheels
+                    ctx.fillStyle = '#1f2937';
+                    ctx.fillRect(this.x + 3, this.y + this.height - 3, 4, 3);
+                    ctx.fillRect(this.x + this.width - 7, this.y + this.height - 3, 4, 3);
+
+                    // Label with ID
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 7px monospace';
+                    ctx.fillText(`${this.type.label} ${this.id}`, this.x + 2, this.y - 2);
+                }
+
+                update() {
+                    this.x += this.speed;
+
+                    // Check crossing the vertical counting line at x = lineX
+                    if (!this.counted && this.x + this.width > lineX && this.x < lineX + 5) {
+                        this.counted = true;
+                        totalCount++;
+                        updateDisplay();
+                        showEvent(`${this.type.name} crossed line`, this.color);
+                        flashEffect();
+                    }
+
+                    return this.x > canvas.width + 100;
+                }
+            }
+
+            function showEvent(message, color) {
+                const eventSpan = document.getElementById('lastEventText');
+                if (eventSpan) {
+                    eventSpan.innerHTML = `🔴 ${message}`;
+                    eventSpan.style.color = color || '#F59E0B';
+                    setTimeout(() => {
+                        if (eventSpan.innerHTML === `🔴 ${message}`) {
+                            eventSpan.innerHTML = 'Ready...';
+                            eventSpan.style.color = '#94a3b8';
+                        }
+                    }, 1500);
+                }
+            }
+
+            function flashEffect() {
+                canvas.style.transition = 'box-shadow 0.1s';
+                canvas.style.boxShadow = '0 0 20px #F59E0B';
+                setTimeout(() => {
+                    canvas.style.boxShadow = 'none';
+                }, 150);
+            }
+
+            function updateDisplay() {
+                const countSpan = document.getElementById('demoCount');
+                if (countSpan) countSpan.innerHTML = `🚗 Count: ${totalCount}`;
+            }
+
+            function spawnVehicle() {
+                const type = getRandomVehicleType();
+                const y = 30 + Math.random() * (canvas.height - 80);
+                vehicles.push(new Vehicle(-50, y, type));
+            }
+
+            function drawBackground() {
+                // Road surface
+                ctx.fillStyle = '#1a1a2e';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Road lines (horizontal dashed)
+                ctx.strokeStyle = '#3B82F6';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([15, 20]);
+                for (let y = 30; y < canvas.height; y += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
+
+                // Counting line (vertical)
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(lineX, 0);
+                ctx.lineTo(lineX, canvas.height);
+                ctx.strokeStyle = '#F59E0B';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Glow effect
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = '#F59E0B';
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // Label
+                ctx.fillStyle = '#F59E0B';
+                ctx.font = 'bold 8px monospace';
+                ctx.fillText('COUNTING LINE', lineX - 40, 15);
+            }
+
+            function animate() {
+                drawBackground();
+
+                for (let i = vehicles.length - 1; i >= 0; i--) {
+                    const removed = vehicles[i].update();
+                    if (removed) {
+                        vehicles.splice(i, 1);
+                    } else {
+                        vehicles[i].draw();
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            // Start spawning vehicles
+            function startSpawning() {
+                setTimeout(() => spawnVehicle(), 300);
+                setTimeout(() => spawnVehicle(), 800);
+                setTimeout(() => spawnVehicle(), 1400);
+                setInterval(() => {
+                    if (vehicles.length < 10) {
+                        spawnVehicle();
+                    }
+                }, 2000);
+            }
+
+            updateDisplay();
+            startSpawning();
+            animate();
+        })();
+
+        // Fetch real stats from backend
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/jobs');
+                const data = await response.json();
+                const completedJobs = data.jobs.filter(j => j.status === 'completed');
+                if (completedJobs.length > 0) {
+                    const lastJob = completedJobs[completedJobs.length - 1];
+                    const countElem = document.getElementById('liveCount');
+                    if (countElem) countElem.innerText = lastJob.count || 0;
+                }
+
+                const healthResponse = await fetch('/api/health');
+                const healthData = await healthResponse.json();
+                if (healthData.gpu_available) {
+                    const fpsElem = document.getElementById('liveFPS');
+                    if (fpsElem) fpsElem.innerHTML = '50+ <span style="font-size:0.8rem;">FPS</span>';
+                }
+            } catch (e) {
+                console.error('Error fetching stats:', e);
+            }
+        }
+
+        setInterval(fetchStats, 3000);
+        fetchStats();
+    </script>
+</body>
+</html>

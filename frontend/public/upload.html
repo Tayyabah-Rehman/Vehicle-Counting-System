@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video | VehicleCount AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #14141f 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .navbar {
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+            border-radius: 10px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .upload-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff, #3B82F6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #3B82F6;
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(59, 130, 246, 0.05);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area.drag-over {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #60A5FA;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            display: none;
+            border-left: 3px solid #3B82F6;
+            font-size: 0.9rem;
+        }
+
+        .file-info.error {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-process {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            color: white;
+        }
+
+        .btn-process:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-cancel {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .btn-cancel:hover:not(:disabled) {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+            transition: width 0.3s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.8rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .progress-message {
+            font-size: 0.7rem;
+            color: #3B82F6;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .results-box {
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            overflow: hidden;
+            display: none;
+        }
+
+        .total-top {
+            padding: 1rem;
+            text-align: center;
+            background: rgba(16, 185, 129, 0.1);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .total-top-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .total-top-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #10B981;
+        }
+
+        .results-header {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .results-header h3 {
+            color: #3B82F6;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .breakdown-row {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .breakdown-item {
+            flex: 1;
+            padding: 1.2rem 0.5rem;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .breakdown-item:last-child {
+            border-right: none;
+        }
+
+        .breakdown-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .breakdown-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #3B82F6;
+        }
+
+        .download-btn {
+            display: block;
+            background: #10B981;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            margin: 1rem 1rem 1rem 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .error-container {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            padding: 0.8rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            display: none;
+            font-size: 0.85rem;
+        }
+
+        .queue-status {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .nav-links {
+                display: none;
+            }
+            .breakdown-value {
+                font-size: 1.2rem;
+            }
+            .breakdown-label {
+                font-size: 0.65rem;
+            }
+            .total-top-value {
+                font-size: 1.5rem;
+            }
+            .progress-stats {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🚗</div>
+                <span>VehicleCount AI</span>
+            </div>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/upload" class="active">Upload</a>
+                <a href="/history">History</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="upload-card">
+            <h1>Upload Traffic Video</h1>
+            <p class="subtitle">Supported: MP4, AVI, MOV, MKV | Max 500MB</p>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📹</div>
+                <p><strong>Click or drag & drop video file here</strong></p>
+                <input type="file" id="fileInput" accept="video/*" style="display: none;">
+            </div>
+
+            <div class="file-info" id="fileInfo"></div>
+            <div class="queue-status" id="queueStatus"></div>
+
+            <div class="button-row">
+                <button class="btn btn-process" id="processBtn" disabled>Process</button>
+                <button class="btn btn-cancel" id="cancelBtn" disabled>Cancel</button>
+            </div>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-stats">
+                    <span id="progressPercent">0%</span>
+                    <span id="progressFPS">FPS: --</span>
+                    <span id="progressCount">Count: 0</span>
+                </div>
+                <div class="progress-message" id="progressMessage">
+                    Processing video...
+                </div>
+            </div>
+
+            <div class="results-box" id="resultsBox">
+                <div class="total-top">
+                    <div class="total-top-label">TOTAL VEHICLES</div>
+                    <div class="total-top-value" id="totalValue">0</div>
+                </div>
+                <div class="results-header">
+                    <h3>BREAKDOWN BY TYPE</h3>
+                </div>
+                <div class="breakdown-row">
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Cars</div>
+                        <div class="breakdown-value" id="carValue">0</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Two Wheelers</div>
+                        <div class="breakdown-value" id="twoWheelerValue">0</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Buses</div>
+                        <div class="breakdown-value" id="busValue">0</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">Trucks</div>
+                        <div class="breakdown-value" id="truckValue">0</div>
+                    </div>
+                </div>
+                <a href="#" id="downloadLink" class="download-btn">Download Processed Video</a>
+            </div>
+
+            <div class="error-container" id="errorContainer"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>VehicleCount AI | Real-time Vehicle Detection & Counting | GPU Accelerated</p>
+    </footer>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const processBtn = document.getElementById('processBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFPS = document.getElementById('progressFPS');
+        const progressCount = document.getElementById('progressCount');
+        const progressMessage = document.getElementById('progressMessage');
+        const resultsBox = document.getElementById('resultsBox');
+        const downloadLink = document.getElementById('downloadLink');
+        const errorContainer = document.getElementById('errorContainer');
+        const queueStatus = document.getElementById('queueStatus');
+
+        const carValue = document.getElementById('carValue');
+        const twoWheelerValue = document.getElementById('twoWheelerValue');
+        const busValue = document.getElementById('busValue');
+        const truckValue = document.getElementById('truckValue');
+        const totalValue = document.getElementById('totalValue');
+
+        let selectedFile = null;
+        let pollingInterval = null;
+        let currentJobId = null;
+        let startTime = null;
+
+        uploadArea.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => {
+            if (e.target.files[0]) {
+                selectedFile = e.target.files[0];
+                fileInfo.style.display = 'block';
+                fileInfo.classList.remove('error');
+                fileInfo.innerHTML = `
+                    <strong>Selected:</strong> ${selectedFile.name}<br>
+                    <strong>Size:</strong> ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                `;
+                processBtn.disabled = false;
+                cancelBtn.disabled = true;
+                resultsBox.style.display = 'none';
+            }
+        };
+
+        function displayResults(data) {
+            const breakdown = data.result?.vehicle_breakdown || data.vehicle_breakdown || {};
+            const total = data.count || data.result?.total_count || 0;
+
+            carValue.innerText = breakdown.car || 0;
+            twoWheelerValue.innerText = breakdown.two_wheeler || 0;
+            busValue.innerText = breakdown.bus || 0;
+            truckValue.innerText = breakdown.truck || 0;
+            totalValue.innerText = total;
+
+            resultsBox.style.display = 'block';
+            downloadLink.href = `/api/download/${currentJobId}`;
+            progressMessage.innerHTML = 'Processing complete!';
+            progressMessage.style.color = '#10B981';
+        }
+
+        function updateProgressMessage(progress, fps, count) {
+            if (progress === 0) {
+                progressMessage.innerHTML = 'Starting video processing...';
+            } else if (progress < 30) {
+                progressMessage.innerHTML = `Analyzing video frames (${progress}%)...`;
+            } else if (progress < 60) {
+                progressMessage.innerHTML = `Detecting vehicles (${progress}%)...`;
+            } else if (progress < 90) {
+                progressMessage.innerHTML = `Counting and tracking (${progress}%)...`;
+            } else if (progress < 100) {
+                progressMessage.innerHTML = `Finalizing results (${progress}%)...`;
+            }
+        }
+
+        async function pollStatus(jobId) {
+            try {
+                const response = await fetch(`/api/status/${jobId}`);
+                const data = await response.json();
+
+                if (data.status === 'processing') {
+                    const progress = data.progress || 0;
+                    progressFill.style.width = `${progress}%`;
+                    progressPercent.innerText = `${progress}%`;
+                    progressFPS.innerText = `FPS: ${data.fps || '--'}`;
+                    progressCount.innerText = `Count: ${data.count || 0}`;
+                    updateProgressMessage(progress, data.fps, data.count);
+                }
+                else if (data.status === 'completed') {
+                    if (pollingInterval) clearInterval(pollingInterval);
+                    progressFill.style.width = '100%';
+                    progressPercent.innerText = '100%';
+                    displayResults(data);
+                    processBtn.disabled = false;
+                    cancelBtn.disabled = true;
+                    queueStatus.style.display = 'none';
+                }
+                else if (data.status === 'failed') {
+                    if (pollingInterval) clearInterval(pollingInterval);
+                    errorContainer.style.display = 'block';
+                    errorContainer.innerHTML = data.error || 'Processing failed';
+                    processBtn.disabled = false;
+                    cancelBtn.disabled = true;
+                    progressContainer.style.display = 'none';
+                    progressMessage.innerHTML = 'Processing failed';
+                    progressMessage.style.color = '#ef4444';
+                }
+            } catch (error) {
+                console.error('Poll error:', error);
+            }
+        }
+
+        processBtn.onclick = async () => {
+            if (!selectedFile) return;
+
+            processBtn.disabled = true;
+            cancelBtn.disabled = false;
+            progressContainer.style.display = 'block';
+            resultsBox.style.display = 'none';
+            errorContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressPercent.innerText = '0%';
+            progressFPS.innerText = 'FPS: --';
+            progressCount.innerText = 'Count: 0';
+            progressMessage.innerHTML = 'Uploading video...';
+            progressMessage.style.color = '#3B82F6';
+            queueStatus.style.display = 'block';
+            queueStatus.innerHTML = 'Uploading...';
+            startTime = Date.now();
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+                const uploadData = await uploadRes.json();
+
+                if (!uploadRes.ok) throw new Error(uploadData.detail || 'Upload failed');
+
+                currentJobId = uploadData.job_id;
+                queueStatus.innerHTML = 'Processing video with AI...';
+
+                if (pollingInterval) clearInterval(pollingInterval);
+                pollingInterval = setInterval(() => pollStatus(currentJobId), 1500);
+                pollStatus(currentJobId);
+            } catch (error) {
+                errorContainer.style.display = 'block';
+                errorContainer.innerHTML = error.message;
+                processBtn.disabled = false;
+                cancelBtn.disabled = true;
+                progressContainer.style.display = 'none';
+                queueStatus.style.display = 'none';
+                progressMessage.innerHTML = 'Upload failed';
+                progressMessage.style.color = '#ef4444';
+            }
+        };
+
+        cancelBtn.onclick = () => {
+            if (pollingInterval) clearInterval(pollingInterval);
+            queueStatus.innerHTML = 'Cancelled by user';
+            progressContainer.style.display = 'none';
+            processBtn.disabled = false;
+            cancelBtn.disabled = true;
+            progressMessage.innerHTML = 'Processing cancelled';
+            progressMessage.style.color = '#ef4444';
+            setTimeout(() => {
+                queueStatus.style.display = 'none';
+                progressMessage.innerHTML = 'Processing video...';
+                progressMessage.style.color = '#3B82F6';
+            }, 3000);
+        };
+    </script>
+</body>
+</html>
